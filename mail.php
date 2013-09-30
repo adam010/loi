@@ -12,6 +12,7 @@
  */
 class mail {
     //put your code here
+   // hier kome de mail
 }
 
 ?>
