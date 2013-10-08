@@ -1,6 +1,6 @@
 <?php
 
-require_once('../Connections/connection.php');
+require_once('Connections/connection.php');
 /*
  *
  * -------------------------------------------------------
@@ -30,7 +30,8 @@ class siteform
 
     private $register_fields = array("id" => "", "naam" => "", "username" => "", "email" => "", "password" => "");
     private $listofsports= array("Zwemmen","Tennis","Basketbal","Voetbal","Atletiek","Schaatsen");
-        private $allowed_postcodepattern ="/^[1-9][0-9]{3}[\s]?[A-Za-z]{2}$/i";
+    private $lesdagen=array("Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag");
+    private $allowed_postcodepattern ="/^[1-9][0-9]{3}[\s]?[A-Za-z]{2}$/i";
             //"/^\W*[1-9]{1}[0-9]{3}\W*[a-zA-Z]{2}\W*$/";
             //"/^([0-9]){4}([a-z][A-Z]){2}?$/";
     private $allowed_stringpattern = "/[a-zA-Z]*[^\s][a-zA-Z]{2,}+$/";
@@ -96,14 +97,7 @@ class siteform
         
         
         
-        if ($this->formtype == "registratie" || $this->formtype == "update") {
-            //check als email bestaat bij registratie             
-            if ($this->IsEmailRegistered($this->formfields['email'])) {               
-                $this->formHTML = $this->formcreate(); 
-                return false;
-            }
-        }
-        
+                
         $this->formHTML = $this->formHTML = $this->formcreate();
         return true;
     }
@@ -116,18 +110,11 @@ class siteform
         foreach ($data as $key => $value)
             $this->errors[$key] = $this->validate($key, $value);
         $formvalid = array_filter($this->errors);
-        var_dump($this->errors);
+        //var_dump($this->errors);
         return empty($formvalid);
     }
     
-    public function userRegistered()
-    {
-        if ($this->loginid > 0)
-            return true;
-        else
-            return false;
-    }
-    
+   
     public function getform($fields)
     {
         //fill form fields with values
@@ -147,7 +134,7 @@ class siteform
             return $this->validateEmail($fieldvalue);
        else if ( ($fieldname == 'voornaam' ||               
              $fieldname == 'achternaam' ||
-             $fieldname == 'straat' ||
+           
              $fieldname == 'woonplaats') ){
               if (preg_match($this->allowed_stringpattern, $fieldvalue) != 1)
             return "<span>Fout :</span>
@@ -188,86 +175,16 @@ class siteform
             return "<span>Fout :</span>Ongeldig emailadres!";
         if (preg_match($this->allowed_emailpattern, $email) != 1) // verificatie regex. expressie
             return "<span>Fout :</span><bR>
-			<ul class=\"foutlst\">
-			<li>Alleen .nl emailadres toegestaan</li>
+			<ul class=\"foutlst\">			
 			<li>Alleen uit cijfers!</li>
 			<li>Geen speciale tekens!</li>
 			</ul>";
-        if (($this->formtype == "registratie" || $this->formtype == "update")) { //emailadres moet vrij zijn bij registratie
-            if ($this->IsEmailRegistered($email))
-                return "<span>Fout :</span>Dit emailadres is reeds in gebruik!";
-        }
+      
         
         return false;
     }
     
-    private function IsEmailRegistered($email)
-    {
-        $query  = "Select id from users where email='" . $email . "'";
-        $result = $this->queryExecute($query);
-        $row    = mysql_fetch_assoc($result);
-        
-        if ($row && $this->accesform)
-            return true;
-        else if ($this->formtype == "update" && $row['id'] == $this->loginid)
-            return false;
-        else if ($row)
-            return true;
-        return false;
-    }
-    
-    private function isRegistered($username, $password)
-    {
-        //controle op user-wachw.combinatie	
-        //check of username bestaat 
-        
-        $query = "Select id from users where username='" . $username . "'";
-        
-        if ($this->formtype == "inloggen") {
-            $pass = MD5($password);
-            $query .= " AND `password`= '" . $pass . "'";
-        }
-        $result = $this->queryExecute($query);
-        $row    = mysql_fetch_assoc($result);
-        
-        if ($this->formtype == "inloggen") {
-            
-            if ($row)
-                $this->loginid = $row['id']; // user_id beschikbaar voor inloggen	
-            else
-                return $this->incorrectdata($this->formtype);
-        } else if ($this->formtype == "registratie") {
-            if ($row) {
-                if ($row['id'] == $this->loginid && $this->mode == "update") //current record 
-                    return true;
-            }
-            //else return $this->incorrectdata($this->formtype);
-            if ($row) //username taken
-                return $this->incorrectdata($this->formtype);
-        }
-        return true;
-    }
-    
-    private function incorrectdata($frm)
-    {
-        
-        switch ($frm) {
-            case "inloggen":
-                $this->titel        = "Login mislukt";
-                $this->omschrijving = "De combinatie van email en wachtwoord is onbekend!<br>U kunt zich hier <a href=\"" . $_SERVER['PHP_SELF'] . "?f=registratie\">Registreren</a>";
-                
-                break;
-            case "registratie":
-                $this->titel        = "Usernaam in gebruik";
-                $this->omschrijving = "Usernaam is reeds in gebruikt!";
-                break;
-            default:
-                $this->titel        = "INLOGGEN";
-                $this->omschrijving = "Vul uw login gegevens in om in te loggen";
-        }
-        return false;
-    }
-    
+  
     //Maak  formulier
     //dynamische form op basis van formtype en velden
     private function formcreate()
@@ -278,11 +195,11 @@ class siteform
         $formdef    = sprintf("<div class=\"%s\"><span class=\"formtitle\"></span>",$this->formtype,$this->titel);
         $formdef .= sprintf("<form  name=\"%s\" method=\"post\" action=\"%s\">", $this->formtype, $_SERVER['PHP_SELF']);
         $formdef .= sprintf("<input type=\"hidden\" name=\"thisform\" id=\"thisform\" value=\"%s\"/>", $this->formtype);
-        $fieldstoskip = array("id","gewijzigd","laatstgewijzigd","thuisteam","uitteam");
-                      
+        $fieldstoskip = array("id","gewijzigd","laatstgewijzigd","lidnummer"); 
+        sort($this->listofsports) ;            
         while (list($field, $val) = each($fields)) {
             
-            $datumformat = ($field == "geboortedatum" ? "<sup>(dd/mm/yyyy)</sup>" : "");
+            $datumformat = ($field == "geboortedatum" || $field == "datumingang" || $field == "datumeinde" ? "<sup>(dd/mm/yyyy)</sup>" : "");
             if ($field == "id") {
                 $formdef .= sprintf("<input type=\"hidden\" name=\"id\" id=\"id\" value=\"%s\"/>", $val);
                 continue;
@@ -299,7 +216,16 @@ class siteform
                     <br>{$this->selectmenu(array("Man","Vrouw"),$field)}</label></div>
                         <div class=\"err\"><span>%s</span></div></div>"
                     ,ucfirst($field),$errormsg);
-        
+             else if ($field == "sportonderdeel")                 
+                $formdef .= sprintf("<div class=\"formfield\"><label><strong>%s</strong>
+                    <br>{$this->selectmenu($this->listofsports,$field)}</label></div>
+                        <div class=\"err\"><span>%s</span></div></div>"
+                    ,ucfirst($field),$errormsg);
+              else if ($field == "lesdag")                 
+                $formdef .= sprintf("<div class=\"formfield\"><label><strong>%s</strong>
+                    <br>{$this->selectmenu($this->lesdagen,$field)}</label></div>
+                        <div class=\"err\"><span>%s</span></div></div>"
+                    ,ucfirst($field),$errormsg);      
             else {                
                 $formdef .= sprintf("<div class=\"formfield\"><label><strong><span class=\"label_$field[0]\">%s</span></strong>$datumformat<br>", ucfirst($field));
                 $formdef .= sprintf(" <input type=\"%s\" name=\"%s\" value=\"%s\"/></label>", $fieldtype, $field, $val);                
@@ -312,7 +238,7 @@ class siteform
         return $formdef;
     }
 private function selectmenu($listofitems,$menuname){
-   sort($listofitems);
+
   $select="<select name=\"$menuname\" >";  
   $options="<option value=\"99\">Selecteer optie</option>";
   foreach ($listofitems as $option)

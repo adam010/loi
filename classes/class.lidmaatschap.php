@@ -13,173 +13,87 @@
 	* -------------------------------------------------------
 	*
 	*/
-	include_once("resources/class.database.php");
+
 	// **********************
 	// CLASS DECLARATION
 	// **********************
 	
 	class lidmaatschap
-	{ // class : begin
+	{ 
+// class : begin
 	
 	
 	// **********************
 	// ATTRIBUTE DECLARATION
 	// **********************
 	
-	var $;   // KEY ATTR. WITH AUTOINCREMENT
 	
 	var $id;   // (normal Attribute)
-	var $ledenid;   // (normal Attribute)
+	var $lidnummer;   // (normal Attribute)
 	var $datumingang;   // (normal Attribute)
 	var $datumeinde;   // (normal Attribute)
 	var $sportonderdeel;   // (normal Attribute)
 	var $lesdag;   // (normal Attribute)
 	
-	var $database; // Instance of class database
+	
 	
 	
 	// **********************
 	// CONSTRUCTOR METHOD
 	// **********************
 	
-	function lidmaatschap()
-	{
-	
-	$this->database = new Database();
+	public function __construct(  ){
 	
 	}
+	public function update($data){          
+            foreach($data as $key=> $val)
+                        $this->{$key}=$val; 
+                        
+         return true;   
+        }
 	
+
+        public function formfields(){
+         return get_object_vars($this);   
+        }
+
+       public function save(){
+            $this->insert();       
+        }
+
 	
-	// **********************
-	// GETTER METHODS
-	// **********************
-	
-	
-	function getid()
-	{
-	return $this->id;
+	private function insert(){
+        $this->id = ""; //autoinc.
+        $datumingang=$this->datumingang;                 
+        $datumeinde=$this->datumeinde;
+        $datumingang=$this->sqldate($datumingang);
+        $datumeinde=$this->sqldate($datumeinde);
+        $insertSQL = "INSERT INTO lidmaatschap ( id,lidnummer,datumingang,datumeinde,sportonderdeel,lesdag ) VALUES ( '$this->id','$this->lidnummer','$datumingang','$datumeinde','$this->sportonderdeel','$this->lesdag' )";
+	$result = $this->queryExecute( $insertSQL );
+        if ( $result )
+            return $this->id= mysql_insert_id();
+        return false;
 	}
-	
-	function getledenid()
-	{
-	return $this->ledenid;
-	}
-	
-	function getdatumingang()
-	{
-	return $this->datumingang;
-	}
-	
-	function getdatumeinde()
-	{
-	return $this->datumeinde;
-	}
-	
-	function getsportonderdeel()
-	{
-	return $this->sportonderdeel;
-	}
-	
-	function getlesdag()
-	{
-	return $this->lesdag;
-	}
-	
-	// **********************
-	// SETTER METHODS
-	// **********************
-	
-	
-	function setid($val)
-	{
-	$this->id =  $val;
-	}
-	
-	function setledenid($val)
-	{
-	$this->ledenid =  $val;
-	}
-	
-	function setdatumingang($val)
-	{
-	$this->datumingang =  $val;
-	}
-	
-	function setdatumeinde($val)
-	{
-	$this->datumeinde =  $val;
-	}
-	
-	function setsportonderdeel($val)
-	{
-	$this->sportonderdeel =  $val;
-	}
-	
-	function setlesdag($val)
-	{
-	$this->lesdag =  $val;
-	}
-	
-	// **********************
-	// SELECT METHOD / LOAD
-	// **********************
-	
-	function select($id)
-	{
-	
-	$sql =  "SELECT * FROM lidmaatschap WHERE  = $id;";
-	$result =  $this->database->query($sql);
-	$result = $this->database->result;
-	$row = mysql_fetch_object($result);
-	if($row){
-	
-	$this->id = $row->id;
-	
-	$this->ledenid = $row->ledenid;
-	
-	$this->datumingang = $row->datumingang;
-	
-	$this->datumeinde = $row->datumeinde;
-	
-	$this->sportonderdeel = $row->sportonderdeel;
-	
-	$this->lesdag = $row->lesdag;
-	}else{return false};
-	}
-	
-	// **********************
-	// DELETE
-	// **********************
-	
-	function delete($id)
-	{
-	$sql = "DELETE FROM lidmaatschap WHERE  = $id;";
-	$result = $this->database->query($sql);
-	
-	}
-	
-	// **********************
-	// INSERT
-	// **********************
-	
-	function insert()
-	{
-	$this-> = ""; // clear key for autoincrement
-	
-	$sql = "INSERT INTO lidmaatschap ( id,ledenid,datumingang,datumeinde,sportonderdeel,lesdag ) VALUES ( '$this->id','$this->ledenid','$this->datumingang','$this->datumeinde','$this->sportonderdeel','$this->lesdag' )";
-	$result = $this->database->query($sql);
-	$this-> = mysql_insert_id($this->database->link);
-	
-	}
-	
-	// **********************
-	// UPDATE
-	// **********************	
-	function update($id)
-	{
-	$sql = " UPDATE lidmaatschap SET  id = '$this->id',ledenid = '$this->ledenid',datumingang = '$this->datumingang',datumeinde = '$this->datumeinde',sportonderdeel = '$this->sportonderdeel',lesdag = '$this->lesdag' WHERE  = $id ";
-	$result = $this->database->query($sql);
-	
-	}
+    private function queryExecute( $query )
+    {
+        //var_dump($query); exit;
+        global $database_connection;
+        global $connection;
+        mysql_select_db( $database_connection, $connection );
+        $result = mysql_query( $query, $connection ) or die( "verbinding met de database werd verbroken:" . mysql_error() );
+        
+        if ( $result === TRUE )
+            $this->uid = mysql_insert_id();
+        
+        return $result;
+    }
+    private function sqldate($dmy){
+        echo " $dmy<br>";
+      $ymd=explode("/",$dmy);
+      $sqldatum=$ymd[2].$ymd[1].$ymd[0];
+      //$sqldatum= mktime(0,0,0,$sqldatum);
+      echo"hi: $sqldatum<br>";
+      return $sqldatum;
+    }
 	} // class : end	
 	?>
