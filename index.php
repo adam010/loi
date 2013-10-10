@@ -3,49 +3,57 @@ require_once( "classes/class.siteform.php" );
 require_once( "classes/class.lidmaatschap.php" );
 require_once( "classes/class.leden.php" );
 @session_start();
+
 $lid=new leden;
 $lidmaatschap=new lidmaatschap();
-$fields= $lid->nawformfields();
-$regform=new siteform("registratie");
-$regform->formfields=$fields;
+//
+    $regform=new siteform("registratie");
+    
+//init (naw) registratie
 
 
+//process form
 if(isset($_POST['thisform'])){
   $form= $_POST['thisform'];
+  //sanitize post  
   array_shift($_POST);
   array_pop($_POST);
+  
   if($regform->processrequest($_POST))      {
-      //validate ok!
+      //is valid form 
      if($form=="registratie"){ 
          if(!isset($_SESSION['aspirantlid']))
             $_SESSION['aspirantlid']=$regform->formfields;                
             
-        $fields= $lidmaatschap->formfields();
+        //naw ok, nu naar lidmaatshap form 
         $regform=new siteform("lidmaatschap");
-        $regform->formfields=$fields;      
+        
+        $regform->formfields=$lidmaatschap->formfields();      
      }
+     
      if($form=="lidmaatschap" ){
+       //data to object
        $lidmaatschap->update($_POST);
+       //save all
        $lid->save($_SESSION['aspirantlid']);
        $lidmaatschap->lidnummer=$lid->id; 
        if ($lidmaatschap->save())
-             echo "succes";          
-       
+           $mail_verzonden=$lid->sendemail($lidmaatschap->data());
+      
      }
       
-  }
-//    if($form=="registratie")
-//        $fields= $lid->nawformfields();
-//      else if($form=="lidmaatschap" )
-//       $fields= $lidmaatschap->formfields();   
-        
-else{$fields=$_POST;}
-           
-           
-            
+  }        
+  else{$fields=$_POST;}  
+
+   }// form posted
+else{    
+$regform->formfields=$lid->formfields();
 }
-     
-       
+$regform->initForm();       
+if(isset($mail_verzonden))    
+    $regform->formHTML=$mail_verzonden;
+
+
 
    
 //     else if($_POST['thisform']=="lidmaatschap"){     
@@ -58,7 +66,7 @@ else{$fields=$_POST;}
 
 
 //$regform->formfields=$fields;
-$regform->formHTML=$regform->getform($fields)
+//$regform->formHTML=$regform->getform($fields)
 ;?>
 <!DOCTYPE html>
 <html>
@@ -67,7 +75,7 @@ $regform->formHTML=$regform->getform($fields)
         <title></title>
     </head>
     <body>
-        <?php
+        <?php        
         echo $regform->formHTML
         ?>
     </body>
