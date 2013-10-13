@@ -1,0 +1,21 @@
+/* 
+    Document   : style sheet     
+    Author     : D.M Keteldijk
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+.registratie {
+padding: 20px;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+font-size: 14px;
+background-color: #fff;
+border: 1px solid #d8dee2;
+border-top-color: white;
+border-radius: 0 0 4px 4px;
+}
