@@ -11,7 +11,7 @@ require_once( "classes/class.leden.php" );
  * MYSQL DB: dbloi
  * -------------------------------------------------------
  * Created by : D.M.Keteldijk
- * project : LOI-inzendopdracht051R5
+ * project : LOI-inzendopdracht051R6
  * -------------------------------------------------------
  *
  */
@@ -19,7 +19,7 @@ require_once( "classes/class.leden.php" );
 
 //init (naw) registratie
 $lid = new leden;
-$lidmaatschap = new lidmaatschap();
+$lidmaatschap = new lidmaatschap("lidmaatschap");
 
 //form generator
 $regform = new siteform("registratie");
@@ -28,30 +28,32 @@ $regform = new siteform("registratie");
 if (isset($_POST['thisform'])) {
     $form = $_POST['thisform'];
     
-    //sanitize post  
-    array_shift($_POST);//remove thisform elem.
-    array_pop($_POST); //remove html button elem.
+if ($regform->processrequest($_POST)) {
 
-    if ($regform->processrequest($_POST)) {
         //is valid form 
         if ($form == "registratie") {
             if (!isset($_SESSION['aspirantlid']))
-                $_SESSION['aspirantlid'] = $regform->formfields;
-
-            //naw ok, nu naar lidmaatshap form 
+                $_SESSION['aspirantlid'] = $regform->formfields;				
+				
+            //nawgegevens ok, nu naar lidmaatshap form 
             $regform = new siteform("lidmaatschap");
             $regform->formfields = $lidmaatschap->formfields();
             $regform->initForm();
         }
         if ($form == "lidmaatschap") {
-            //data to object
+		
+		 if(!isset($_SESSION['aspirantlid'])) //terug naar af
+		  header("location:index.php");
+		   
+		   //data to object			
             $lidmaatschap->update($_POST);
             
             //save all
             $lid->save($_SESSION['aspirantlid']);
             $lidmaatschap->lidnummer = $lid->id;
-            if ($lidmaatschap->save())
-                $mail_verzonden = $lid->sendemail($lidmaatschap->data());
+            if ($lidmaatschap->save()){
+                $mail_verzonden = $lid->sendemail($lidmaatschap->data());				
+			}
         }
     } //errors displayed in formHTML 
 }// form posted
@@ -61,16 +63,22 @@ else {
     $regform->initForm();
 }
 
-if (isset($mail_verzonden))
+if (isset($mail_verzonden)){
     $regform->formHTML = $mail_verzonden;
+	unset($_SESSION['aspirantlid']);
+}
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title></title>
+            <link href="style.css" media="all" rel="stylesheet" type="text/css" />
+    
     </head>
     <body>
-        <?php echo $regform->formHTML ?>
+        <div class="container">
+            <?php echo $regform->formHTML; ?>
+        </div>
     </body>
 </html>
