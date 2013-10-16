@@ -1,0 +1,161 @@
+/* 
+    Document   : style
+    Author     : D.M.Keteldijk
+    Description:
+       Pagina opmaak LOI-inzendopdracht051R6
+*/
+.container {
+    padding: 20px;
+    font-size: 14px;
+    background-color: #fff;
+    border: 1px solid #d8dee2;
+    border-top-color: white;
+    border-radius: 0 0 4px 4px;
+}
+.nextbtn {
+    position: absolute;
+    background-image: url(images/icon_next.gif);
+    background-repeat: no-repeat;
+    top: 7px;
+    right: 4px;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 48px;
+}
+.prevbtn {
+    position: absolute;
+    background-image: url(images/icon_prev.png);
+    background-repeat: no-repeat;
+    top: 7px;
+    left: 4px;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 48px;
+}
+button span {
+    font-weight: bold;
+    font-style: normal;
+    font-size: 18px;
+    margin-left: -8px;
+}
+button {
+    -webkit-appearance: none;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.0470588) 0px 1px 3px 0px;
+    -webkit-user-select: none;
+    -webkit-writing-mode: horizontal-tb;
+    align-items: flex-start;
+    border: 1px solid #fff;
+    background-color: rgb(96, 176, 68);
+    background-image: linear-gradient(rgb(138, 221, 109), rgb(96, 176, 68));
+    background-repeat: repeat-x;
+    /*border-bottom-left-radius: 5px;;
+    border-bottom-right-radius: 5px;*/
+    border-image-outset: 0px;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: rgba(0, 0, 0, 0.0470588) 0px 1px 3px 0px;
+    box-sizing: border-box;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    display: block;
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 22px;
+    outline-color: rgb(255, 255, 255);
+    padding: 11px 10px 11px 10px;
+    text-align: center;
+    text-shadow: rgba(0, 0, 0, 0.247059) 0px -1px 0px;
+    vertical-align: middle;
+    position: relative;
+    float: left;
+    margin: 0px 20px 5px 10px;
+    width: 185px;
+    height: 44px;
+}
+.form {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #d8dee2;
+    border-color: white rgb(216, 222, 226) rgb(216, 222, 226);
+    border-radius: 4px 4px 4px 4px;
+    width: 60%;
+    display: table;
+    margin: 0 auto;
+}
+body,
+input,
+select,
+button { font: 13px/1.4 Helvetica,arial,freesans,clean,sans-serif }
+input { margin: 0 auto }
+label span { padding-left: 20px }
+input,
+select {
+    min-height: 30px;
+    width: 90%;
+    padding: 7px 8px;
+    outline: medium none;
+    color: rgb(51, 51, 51);
+    background-color: rgb(255, 255, 255);
+    background-repeat: no-repeat;
+    background-position: right center;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075) inset;
+    -moz-box-sizing: border-box;
+    transition: all 0.15s ease-in 0s;
+    vertical-align: middle;
+}
+select { margin-left: 20px }
+input.focus,
+input:focus,
+select.focus,
+select:focus {
+    border-color: rgb(81, 167, 232);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075) inset, 0px 0px 5px rgba(81, 167, 232, 0.5);
+}
+input,
+select {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+.formheader {
+    position: relative;
+    padding: 10px 20px;
+    margin: 0px;
+    color: rgb(255, 255, 255);
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+    background-color: rgb(108, 131, 147);
+    background-image: linear-gradient(rgb(127, 149, 165), rgb(108, 131, 147));
+    background-repeat: repeat-x;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px 4px 0px 0px;
+}
+.formheader span { font-weight: bold }
+.formfields { position: relative }
+label { font-weight: bold }
+label,
+input { font-size: 13px }
+.err {
+    margin: -12px 0px 5px 20px;
+    font-size: 12px;
+    color: #F00;
+    font-weight: bold;
+}
+.msgcontainer {
+    margin: 20px auto;
+    width: 350px;
+}
+.msgcontainer .titel {
+    font-weight: bold;
+    font-style: normal;
+    font-size: 16px;
+}
